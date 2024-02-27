@@ -7,10 +7,10 @@ import * as React from 'react'
 
 // 🐨 use React.lazy to create a Globe component which uses a dynamic import
 // to get the Globe component from the '../globe' module.
-const Globe = React.lazy(() => import('../globe'))
+const Globe = React.lazy(() => import(/* webpackPrefetch: true */ '../globe'))
 
 const loadGlobe = () => {
-  return import('../globe')
+  return import(/* webpackPrefetch: true */ '../globe')
 }
 
 function App() {

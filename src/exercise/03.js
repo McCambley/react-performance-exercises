@@ -7,29 +7,55 @@ import {getItems} from '../filter-cities'
 import {useAsync, useForceRerender} from '../utils'
 
 // 🐨 Memoize the Menu here using React.memo
-const Menu = React.memo(
-  function Menu({
-    items,
-    getMenuProps,
+const Menu = React.memo(function Menu({
+  items,
+  getMenuProps,
+  getItemProps,
+  highlightedIndex,
+  selectedItem,
+}) {
+  return (
+    <ul {...getMenuProps()}>
+      {items.map((item, index) => (
+        <ListItem
+          key={item.id}
+          getItemProps={getItemProps}
+          item={item}
+          index={index}
+          selectedItem={selectedItem}
+          highlightedIndex={highlightedIndex}
+        >
+          {item.name}
+        </ListItem>
+      ))}
+    </ul>
+  )
+})
+
+// 🐨 Memoize the ListItem here using React.memo
+const ListItem = React.memo(
+  function ListItem({
     getItemProps,
-    highlightedIndex,
+    item,
+    index,
     selectedItem,
+    highlightedIndex,
+    ...props
   }) {
+    const isSelected = selectedItem?.id === item.id
+    const isHighlighted = highlightedIndex === index
     return (
-      <ul {...getMenuProps()}>
-        {items.map((item, index) => (
-          <ListItem
-            key={item.id}
-            getItemProps={getItemProps}
-            item={item}
-            index={index}
-            selectedItem={selectedItem}
-            highlightedIndex={highlightedIndex}
-          >
-            {item.name}
-          </ListItem>
-        ))}
-      </ul>
+      <li
+        {...getItemProps({
+          index,
+          item,
+          style: {
+            fontWeight: isSelected ? 'bold' : 'normal',
+            backgroundColor: isHighlighted ? 'lightgray' : 'inherit',
+          },
+          ...props,
+        })}
+      />
     )
   },
   (prevProps, nextProps) => {
@@ -45,32 +71,6 @@ const Menu = React.memo(
     }
   },
 )
-
-// 🐨 Memoize the ListItem here using React.memo
-const ListItem = React.memo(function ListItem({
-  getItemProps,
-  item,
-  index,
-  selectedItem,
-  highlightedIndex,
-  ...props
-}) {
-  const isSelected = selectedItem?.id === item.id
-  const isHighlighted = highlightedIndex === index
-  return (
-    <li
-      {...getItemProps({
-        index,
-        item,
-        style: {
-          fontWeight: isSelected ? 'bold' : 'normal',
-          backgroundColor: isHighlighted ? 'lightgray' : 'inherit',
-        },
-        ...props,
-      })}
-    />
-  )
-})
 function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
